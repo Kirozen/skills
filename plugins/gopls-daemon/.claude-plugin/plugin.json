@@ -1,0 +1,8 @@
+{
+  "name": "gopls-daemon",
+  "description": "Go language server using shared daemon mode",
+  "version": "1.0.0",
+  "author": {
+    "name": "Kirozen"
+  }
+}

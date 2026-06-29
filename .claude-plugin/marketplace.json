@@ -14,6 +14,11 @@
       "name": "sdd",
       "source": "./plugins/sdd",
       "description": "SQLite-backed spec engine: grill -> spec -> research -> review -> build loop, binary auto-provisioned from GitHub releases."
+    },
+    {
+      "name": "gopls-daemon",
+      "source": "./plugins/gopls-daemon",
+      "description": "Go language server (gopls) configured in shared daemon mode for Claude Code's LSP integration."
     }
   ]
 }
