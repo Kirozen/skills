@@ -1,0 +1,14 @@
+{
+  "name": "kirozen-skills",
+  "owner": {
+    "name": "Kirozen"
+  },
+  "description": "Personal Claude Code skills marketplace.",
+  "plugins": [
+    {
+      "name": "code-quality",
+      "source": "./plugins/code-quality",
+      "description": "Code-quality skills: systematic debugging, Clean Code & Clean Architecture, code review, and technical-debt analysis."
+    }
+  ]
+}
