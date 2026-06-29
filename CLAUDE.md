@@ -67,7 +67,7 @@ claude --plugin-dir ./plugins/code-quality    # load the plugin locally without 
 ## Gotchas
 
 - **`plugin.json` is the only thing inside `.claude-plugin/`.** `skills/` (and any `commands/`, `agents/`, `hooks/`) live at the *plugin root*, never inside `.claude-plugin/`.
-- **No symlinks, no `.claude/skills/`.** Plugin skills are auto-discovered after install; the old project-skill symlink mechanism was removed.
+- **`.claude/skills/` symlinks are for local dogfooding only.** Installed plugins expose their skills namespaced (`/code-quality:debugger`). For development *inside this repo*, `.claude/skills/<skill>` symlinks each plugin's skill dir (relative: `../../plugins/<plugin>/skills/<skill>`) so it loads as a plain project skill (`/<skill>`, un-namespaced) without `/plugin install`. Regenerate after adding a skill; vendored plugins shipped elsewhere (e.g. `sdd`) must NOT carry such a symlink (it was removed from `Kirozen/sdd`).
 - **Version bumps.** `plugin.json` sets `version`; bump it on each release or installed users won't get updates. If omitted, the git commit SHA is used instead.
 - **`/reload-plugins`** is required after adding or renaming a skill/plugin; changes aren't picked up live.
 - **No `../` paths.** Files referenced outside a plugin's own directory aren't copied to the install cache. Keep everything self-contained; use `${CLAUDE_PLUGIN_ROOT}` for internal paths in any hook/script.
