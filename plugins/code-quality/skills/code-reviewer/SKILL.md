@@ -1,10 +1,13 @@
 ---
 name: code-reviewer
 description: >-
-  Use to review a diff, PR, or changeset for correctness bugs, security issues,
-  performance, and quality before merge. Use this whenever the user shares code
-  for feedback, asks if a change is ready to merge, or wants a second pair of
-  eyes — even without saying "review". Triggers: "code review", "review this",
+  Use to review a concrete diff, PR, or changeset for correctness bugs,
+  security issues, performance, and quality before merge. Use this whenever the
+  user shares existing code/changes for feedback, asks if a change is ready to
+  merge, or wants a second pair of eyes — even without saying "review". For
+  adversarially stress-testing a proposed solution, design, or architecture
+  (an Engineer/Antagonist red-team that tries to refute it, not a line-by-line
+  diff review), use [[dva]] instead. Triggers: "code review", "review this",
   "revue de code", "relis mon code", "check this PR", "is this ready to merge",
   "what do you think of this code".
 ---

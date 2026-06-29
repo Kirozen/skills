@@ -14,8 +14,10 @@ Clean-code & review skills based on Robert C. Martin's *Clean Code* / *Clean Arc
 |-------|--------------|
 | `clean-code` | Keep code simple and readable while writing/refactoring (naming, small functions, SOLID). |
 | `clean-architect` | Structure layers/modules/boundaries and judge dependency direction. |
-| `code-reviewer` | Review a diff/PR for correctness, security, performance and quality before merge. |
-| `debt-analyzer` | Turn technical debt into a prioritized, evidence-based backlog (impact ÷ effort). |
+| `code-reviewer` | Review a concrete diff/PR for correctness, security, performance and quality before merge. |
+| `dva` | Adversarially stress-test a *proposed* solution/design (Engineer/Antagonist red-team) before committing to it. |
+| `debt-analyzer` | Turn technical debt into a prioritized, evidence-based backlog (impact ÷ effort) — *what to fix first*. |
+| `techdebt` | Exhaustive, agent-orchestrated scan that *enumerates* concrete duplication & dead code with file/line evidence. |
 | `debugger` | Find and *prove* the root cause of a bug before proposing a fix. |
 
 ### `sdd`
@@ -37,6 +39,26 @@ The `sdd` CLI binary is **not** vendored here: a `SessionStart` hook auto-provis
 ### `gopls-daemon`
 
 Configures the Go language server (`gopls`) in shared daemon mode for Claude Code's LSP integration. Pure `.lsp.json` config — no skills.
+
+## Usage
+
+Skills trigger **two ways**:
+
+- **Automatically** — Claude reads each skill's `description` and invokes the right one when your request matches. You don't name it; just describe the task ("relis mon diff", "scan the codebase for duplication", "challenge this design"). Writing the triggers into the description is the *primary* mechanism.
+- **Explicitly** — invoke it by name. Installed, skills are **namespaced**: `/code-quality:code-reviewer`, `/sdd:sdd-spec`. When dogfooding inside this repo (symlinks), they're un-namespaced: `/code-reviewer`.
+
+### Picking between overlapping skills
+
+Two pairs in `code-quality` are deliberately close — pick by *intent*:
+
+| You want to… | Use | Not |
+|--------------|-----|-----|
+| Review concrete changes (a diff/PR) before merge | `code-reviewer` | `dva` |
+| Pressure-test a *proposed* approach/architecture before writing it | `dva` | `code-reviewer` |
+| Decide *what debt to fix first* (prioritized backlog) | `debt-analyzer` | `techdebt` |
+| *Enumerate* concrete duplication / dead code across the repo | `techdebt` | `debt-analyzer` |
+
+A typical flow chains them: `clean-architect` (design) → `dva` (stress-test the design) → `clean-code` (write) → `code-reviewer` (review the diff) → `debugger` (if something breaks). For health checks, `techdebt` enumerates, then `debt-analyzer` prioritizes the findings.
 
 ## Install
 

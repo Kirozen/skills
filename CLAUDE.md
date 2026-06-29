@@ -29,7 +29,7 @@ plugins/
 
 Plugins currently in the marketplace:
 
-- **`code-quality`** bundles `debugger`, `clean-code`, `clean-architect`, `code-reviewer`, `debt-analyzer` — a connected set (clean-code/clean-architect = the standard, code-reviewer = catch, debt-analyzer = measure, debugger = fix). Pure Markdown skills.
+- **`code-quality`** bundles `debugger`, `clean-code`, `clean-architect`, `code-reviewer`, `debt-analyzer`, `dva`, `techdebt` — a connected set (clean-code/clean-architect = the standard, code-reviewer = catch, debt-analyzer/techdebt = measure, dva = adversarially challenge, debugger = fix). `dva` (adversarial Engineer/Antagonist review) and `techdebt` (agent-orchestrated duplication/dead-code audit, with a `references/` dir) carry supporting reference files; the rest are pure Markdown.
 - **`sdd`** — SQLite-backed spec-driven development (skills `sdd-grill`, `sdd-spec`, `sdd-research`, `sdd-review`, `sdd-build`, `sdd-backprop`, `sdd-deepen` + matching slash commands). This is a *vendored* plugin: the engine (Go CLI, release pipeline) lives in the separate `Kirozen/sdd` repo. See *Maintaining the vendored `sdd` plugin* below.
 
 ## Adding a skill (to an existing plugin)

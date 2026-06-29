@@ -1,12 +1,15 @@
 ---
 name: debt-analyzer
 description: >-
-  Use to assess technical debt across a codebase or module and turn it into a
-  prioritized, evidence-based backlog (impact ÷ effort). Use this whenever the
-  user asks what to refactor first, where the risks or hotspots are, or about
-  overall code health — even without saying "technical debt". Triggers:
-  "technical debt", "debt analyzer", "dette technique", "what should we
-  refactor", "where are the risks", "code health", "hotspots".
+  Use to turn technical debt into a prioritized, evidence-based backlog
+  (impact ÷ effort) — the "what should we fix first" decision. Use this
+  whenever the user asks what to refactor first, where the risks or hotspots
+  are, or about overall code health — even without saying "technical debt".
+  For an exhaustive, agent-orchestrated scan that locates concrete duplicate
+  functions, copy-pasted blocks, and dead code, use [[techdebt]] instead; this
+  skill prioritizes, techdebt enumerates. Triggers: "technical debt", "debt
+  analyzer", "dette technique", "what should we refactor", "where are the
+  risks", "code health", "hotspots", "prioritize the debt".
 ---
 
 # Technical Debt Analyzer
