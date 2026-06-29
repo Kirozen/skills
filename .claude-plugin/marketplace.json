@@ -9,6 +9,11 @@
       "name": "code-quality",
       "source": "./plugins/code-quality",
       "description": "Code-quality skills: systematic debugging, Clean Code & Clean Architecture, code review, and technical-debt analysis."
+    },
+    {
+      "name": "sdd",
+      "source": "./plugins/sdd",
+      "description": "SQLite-backed spec engine: grill -> spec -> research -> review -> build loop, binary auto-provisioned from GitHub releases."
     }
   ]
 }
