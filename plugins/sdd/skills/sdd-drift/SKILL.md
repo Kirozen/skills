@@ -36,7 +36,10 @@ axis entirely.
 
 Orient with the read-only commands: `sdd list invariant|interface|task`,
 `sdd refs V<n>|I.<name>` (rows citing a ref), `sdd cover` (proving test per
-invariant, `!` if none).
+invariant, `!` if none), `sdd graph V<n>|I.<name>` (that durable's blast radius
+as Mermaid — everything citing it, to weigh a violation's impact before you rank
+its severity; `sdd graph` alone = the durables overview, orphans/uncovered
+flagged).
 
 ## CHECK §V — invariants
 
