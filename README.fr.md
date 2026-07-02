@@ -24,7 +24,17 @@ Skills de code propre & de revue, basées sur *Clean Code* / *Clean Architecture
 
 ### `sdd`
 
-Développement piloté par la spec, adossé à SQLite. La spec vit dans une base de données ; `SPEC.md` en est une vue générée en lecture seule. La boucle complète est pilotée par la CLI `sdd`. Pour la référence des commandes CLI et le modèle de spec (blocs durables vs éphémères, citations), voir le dépôt moteur [`Kirozen/sdd`](https://github.com/Kirozen/sdd).
+Développement piloté par la spec, adossé à SQLite. La spec vit dans une base de données ; `SPEC.md` en est une vue générée en lecture seule, ré-exportée atomiquement à chaque mutation — fichier et base ne divergent donc jamais.
+
+**Pourquoi** : une mauvaise hypothèse attrapée au moment de la spec coûte une question ; attrapée après le build, elle coûte un bug. `sdd` rend la spec **requêtable et infalsifiable** — invariants, interfaces, tâches se citent via des clés étrangères, donc une tâche ne peut pas référencer un invariant qui n'existe pas. Il pose une coupure : la couche **durable** (invariants, interfaces, bugs, recherche — survit d'une feature à l'autre) vs la couche **éphémère** (goal, contraintes, tâches d'une feature — effacée quand la feature est finie). C'est cette coupure qui empêche la spec de grossir indéfiniment.
+
+Les skills orchestrent le cycle de vie comme une boucle ordonnée ; chaque écriture durable passe par la CLI `sdd`, jamais par une édition manuelle de `SPEC.md` :
+
+```
+grill → spec → research → review → build → backprop → deepen → drift
+```
+
+`sdd guide` indique, par feature, l'étape inférée et la skill suivante recommandée. Pour la référence complète des commandes CLI et le modèle de spec complet (tous les types de blocs, citations, clés), voir le dépôt moteur [`Kirozen/sdd`](https://github.com/Kirozen/sdd).
 
 | Skill | Ce qu'elle fait |
 |-------|-----------------|

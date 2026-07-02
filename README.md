@@ -24,7 +24,17 @@ Clean-code & review skills based on Robert C. Martin's *Clean Code* / *Clean Arc
 
 ### `sdd`
 
-SQLite-backed spec-driven development. The spec lives in a database; `SPEC.md` is a generated read-only view. The full loop is driven by the `sdd` CLI. For the CLI command reference and the spec model (durable vs ephemeral blocks, citations), see the [`Kirozen/sdd`](https://github.com/Kirozen/sdd) engine repo.
+SQLite-backed spec-driven development. The spec lives in a database; `SPEC.md` is a generated read-only view that is re-exported atomically on every mutation, so the file and the database never diverge.
+
+**Why**: a bad assumption caught at spec time costs one question; caught after the build, it costs a bug. `sdd` makes the spec **queryable and tamper-proof** — invariants, interfaces, tasks cite each other through foreign keys, so a task cannot reference an invariant that does not exist. It draws one cut: the **durable** layer (invariants, interfaces, bugs, research — survives across features) vs the **ephemeral** layer (a feature's goal, constraints, tasks — wiped when the feature is done). That cut is what keeps the spec from growing forever.
+
+The skills drive the lifecycle as an ordered loop; every durable write goes through the `sdd` CLI, never a hand-edit of `SPEC.md`:
+
+```
+grill → spec → research → review → build → backprop → deepen → drift
+```
+
+`sdd guide` reports, per feature, the inferred stage and the recommended next skill. For the full CLI command reference and the complete spec model (all block types, citations, keys), see the [`Kirozen/sdd`](https://github.com/Kirozen/sdd) engine repo.
 
 | Skill | What it does |
 |-------|--------------|
