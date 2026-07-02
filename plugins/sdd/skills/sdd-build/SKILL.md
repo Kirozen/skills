@@ -19,9 +19,11 @@ Single-thread plan→execute. The task list lives in spec.db; read it via
 3. High blast radius (shared module, data, public interface)? Run sdd-review first.
 
 Orient with the pure read commands: `sdd next` (next actionable task + its goal
-and resolved cites), `sdd todo` (every unfinished task as TSV — machine-readable
-for picking work), `sdd status`/`sdd guide` (per-feature stage). `sdd --help`
-lists every command.
+and resolved cites — skips a todo with an unmet blocker, always keeps a wip task,
+V124), `sdd ready` (the dispatchable frontier: todo tasks whose blockers are all
+done, as TSV), `sdd todo` (every unfinished task as TSV — machine-readable for
+picking work), `sdd status`/`sdd guide` (per-feature stage). `sdd --help` lists
+every command.
 
 ## PLAN (native plan mode)
 For the chosen task:

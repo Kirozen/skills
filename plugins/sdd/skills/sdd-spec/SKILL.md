@@ -33,6 +33,9 @@ sdd add-goal "<line>" --feature <id>
 sdd add-constraint "<bullet>" --feature <id>
 sdd add-task "<task>" --feature <id> --cites V2,I.init
 sdd add-cite <T-ord> --feature <id> V3,I.foo      # cite an EXISTING task (ords per-feature, V117)
+sdd block <T-ord> --on <T-ord,...> --feature <id>   # T waits on each --on task; cycles rejected (V125)
+sdd unblock <T-ord> --off <T-ord,...> --feature <id> # drop those edges (idempotent)
+sdd rm-task <T-ord> --feature <id>                  # hard-delete a task; its cites + blocker edges cascade
 ```
 Landing a whole spec at once? Batch every write in one transaction with
 `sdd apply` — TAB-delimited `add-*` lines on stdin, all-or-nothing; a leading
