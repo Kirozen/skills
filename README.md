@@ -1,5 +1,7 @@
 # kirozen-skills
 
+*[Version française](README.fr.md).*
+
 Personal [Claude Code](https://claude.ai/code) plugin marketplace. Everything is Markdown + config — no build step.
 
 The marketplace bundles three plugins. Skills are auto-discovered after install and invoked **namespaced** as `/<plugin>:<skill>`.
@@ -22,7 +24,7 @@ Clean-code & review skills based on Robert C. Martin's *Clean Code* / *Clean Arc
 
 ### `sdd`
 
-SQLite-backed spec-driven development. The spec lives in a database; `SPEC.md` is a generated read-only view. The full loop is driven by the `sdd` CLI.
+SQLite-backed spec-driven development. The spec lives in a database; `SPEC.md` is a generated read-only view. The full loop is driven by the `sdd` CLI. For the CLI command reference and the spec model (durable vs ephemeral blocks, citations), see the [`Kirozen/sdd`](https://github.com/Kirozen/sdd) engine repo.
 
 | Skill | What it does |
 |-------|--------------|
