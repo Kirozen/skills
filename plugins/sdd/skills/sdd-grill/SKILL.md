@@ -38,7 +38,7 @@ sdd add-goal "<goal line>" --feature $fid
 sdd add-constraint "<constraint>" --feature $fid
 ```
 Durable truths (invariants/interfaces) wait for sdd-spec — grill proposes, spec
-writes. Never hand-edit SPEC.md; it is generated (run `sdd cat` to read it).
+writes. Never hand-edit SPEC.md; read the spec with `sdd cat` (SPEC.md is an on-demand export).
 
 ## HANDOFF
 When §G is one line with one reading and every blocking unknown is answered or

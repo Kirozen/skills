@@ -4,8 +4,8 @@ description: |
   Read-only drift detector: diffs the spec (invariants/interfaces/tasks in
   spec.db) against the current code and reports violations grouped by severity.
   Writes nothing — suggests remedies via sdd-backprop / sdd-spec / sdd-build but
-  never invokes them. Distinct from the `sdd check` CLI command (which only
-  verifies SPEC.md == spec.db); this checks code == spec. Triggers when the user
+  never invokes them. This checks code == spec (a different axis from `sdd
+  export`, which merely re-renders SPEC.md from spec.db). Triggers when the user
   asks to check drift, audit the spec, verify invariants hold in code, or ask
   whether the code still matches §V/§I/§T. Phrasings: "check drift", "sdd drift",
   "audit the spec", "does the code still match V2", "are the invariants still
@@ -20,9 +20,9 @@ Spec drifting silently from code is the #1 SDD failure mode. sdd-drift is the
 detector. Run it after each build and before each ship — drift caught here is a
 diff; drift caught in prod is a durable bug.
 
-**Not the same as `sdd check`.** The CLI `sdd check` fails if SPEC.md drifted
-from spec.db (the generated view vs its source). sdd-drift diffs the spec vs the
-**code**. Complementary, not redundant.
+**Not a file render.** `sdd export` re-renders SPEC.md from spec.db (the view vs
+its source) — a pure read. sdd-drift diffs the spec vs the **code**: a different
+axis entirely.
 
 ## LOAD
 

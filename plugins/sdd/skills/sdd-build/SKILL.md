@@ -1,8 +1,8 @@
 ---
 name: sdd-build
 description: |
-  Plan-then-execute implementation against the spec.db tasks. Reads the generated
-  SPEC.md for context, flips task status via the sdd CLI, and auto-invokes
+  Plan-then-execute implementation against the spec.db tasks. Reads the spec via
+  `sdd cat` for context, flips task status via the sdd CLI, and auto-invokes
   sdd-backprop on test/build failure. Triggers on "build", "implement the next
   task", "run the build", `build T<n>`, or /sdd-build.
 ---
@@ -44,5 +44,4 @@ On failure: do NOT retry blindly — invoke **sdd-backprop** first.
 ## VERIFICATION
 A task is `x` only if the oracle exits 0, every cited invariant has its named
 passing test (`sdd cover` flags any invariant with no proving test), and the
-full suite still passes. `sdd check` must pass (SPEC.md == spec.db). Commit after
-each task.
+full suite still passes. Commit after each task.

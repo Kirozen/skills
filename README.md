@@ -24,7 +24,7 @@ Clean-code & review skills based on Robert C. Martin's *Clean Code* / *Clean Arc
 
 ### `sdd`
 
-SQLite-backed spec-driven development. The spec lives in a database; `SPEC.md` is a generated read-only view that is re-exported atomically on every mutation, so the file and the database never diverge.
+SQLite-backed spec-driven development. The spec lives in a database; `SPEC.md` is a read-only view regenerated on demand by `sdd export` (spec.db is the sole store).
 
 **Why**: a bad assumption caught at spec time costs one question; caught after the build, it costs a bug. `sdd` makes the spec **queryable and tamper-proof** — invariants, interfaces, tasks cite each other through foreign keys, so a task cannot reference an invariant that does not exist. It draws one cut: the **durable** layer (invariants, interfaces, bugs, research — survives across features) vs the **ephemeral** layer (a feature's goal, constraints, tasks — wiped when the feature is done). That cut is what keeps the spec from growing forever.
 
@@ -45,7 +45,7 @@ grill → spec → research → review → build → backprop → deepen → dri
 | `sdd-build` | Plan-then-execute against the spec tasks; auto-invokes backprop on failure. |
 | `sdd-backprop` | Bug → spec: trace the root cause and persist a new invariant to catch recurrence. |
 | `sdd-deepen` | Optional design-improvement pass — shrink interfaces, hide decisions. |
-| `sdd-drift` | Read-only detector for code-vs-spec drift; reports violations by severity, writes nothing. Distinct from the `sdd check` CLI (SPEC.md == spec.db). |
+| `sdd-drift` | Read-only detector for code-vs-spec drift; reports violations by severity, writes nothing. A different axis from `sdd export` (which just re-renders SPEC.md). |
 
 The `sdd` CLI binary is **not** vendored here: a `SessionStart` hook auto-provisions it from the [`Kirozen/sdd`](https://github.com/Kirozen/sdd) GitHub releases (verified by SHA256). The binary's release tag is pinned independently of the plugin version in `plugins/sdd/scripts/binary-version`, so skill-only updates can bump the plugin without requiring a matching binary release.
 

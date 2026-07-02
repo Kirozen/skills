@@ -12,8 +12,8 @@ description: |
 # sdd-spec — spec mutator (via sdd)
 
 The other skills produce material; sdd-spec persists it through the CLI. The db
-is the source of truth; SPEC.md is generated (`sdd export`). Read it for
-context, never edit it (V3, V6).
+is the source of truth; read the spec with `sdd cat`. SPEC.md is an on-demand
+export (`sdd export`), never hand-edited (V3).
 
 ## DISPATCH
 - New feature from an idea → run sdd-grill first if fuzzy, then land it here.
@@ -35,12 +35,12 @@ sdd add-task "<task>" --feature <id> --cites V2,I.init
 sdd add-cite <T-ord> --feature <id> V3,I.foo      # cite an EXISTING task (ords per-feature, V117)
 ```
 Landing a whole spec at once? Batch every write in one transaction with
-`sdd apply` — TAB-delimited `add-*` lines on stdin, all-or-nothing, a single
-final re-export; a leading `new-feature` sets the current feature.
+`sdd apply` — TAB-delimited `add-*` lines on stdin, all-or-nothing; a leading
+`new-feature` sets the current feature.
 
 ## RULES
 - `--cites` must reference existing V<n>/I.<name>; the FK rejects orphans (V5).
-- Every mutation re-exports SPEC.md atomically; run `sdd check` if unsure of drift.
+- Mutations commit atomically to spec.db (the sole store); `sdd export` regenerates SPEC.md on demand — no auto-export.
 - Show the user what you will run, then run it. The CLI is the diff.
 - `sdd --help` lists every command; `sdd <cmd> --help` for one.
 
