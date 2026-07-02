@@ -12,6 +12,12 @@ description: >-
   opportunities", "scan for copy-paste".
 ---
 
+# Tech Debt Scanner
+
+Exhaustive, agent-orchestrated scan that enumerates concrete duplication and dead
+code with file/line evidence. Complements [[debt-analyzer]] (which prioritizes
+what to fix first); this skill *finds* the instances.
+
 ## When to Use
 
 - Sprint dedicated to reducing technical debt

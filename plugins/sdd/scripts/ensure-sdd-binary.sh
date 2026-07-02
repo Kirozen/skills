@@ -7,7 +7,9 @@
 #
 # Invariants enforced here:
 #   V81  binary lands in ${CLAUDE_PLUGIN_ROOT}/bin/sdd (auto-PATH); no hardcoded path elsewhere
-#   V82  release tag fetched == plugin.json.version (binary coupled to plugin version)
+#   V82  release tag fetched == scripts/binary-version (fallback: plugin.json.version).
+#        The binary version is decoupled from the plugin version so skill-only
+#        releases can bump plugin.json without chasing a matching binary release.
 #   V83  atomic + idempotent: no-op if present; download->verify->rename; no partial binary
 #   V84  SHA256 verified against published SHA256SUMS BEFORE placing on PATH
 #   V85  OS/arch via uname; only darwin/linux x amd64/arm64; else abort
@@ -62,11 +64,18 @@ case "$uname_m" in
 esac
 ASSET="sdd_${OS}_${ARCH}"
 
-# V82: tag == plugin.json.version. Parse without jq.
-MANIFEST="${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json"
-[ -f "$MANIFEST" ] || give_up "manifest not found at ${MANIFEST}."
-VERSION="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$MANIFEST" | head -1)"
-[ -n "$VERSION" ] || give_up "could not read version from ${MANIFEST}."
+# V82: binary release tag comes from scripts/binary-version (decoupled from the
+# plugin version). Fall back to plugin.json.version when the file is absent, so
+# an upstream checkout without the file still provisions the matching binary.
+VERSION_FILE="${CLAUDE_PLUGIN_ROOT}/scripts/binary-version"
+if [ -f "$VERSION_FILE" ]; then
+	VERSION="$(sed -n '1{s/[[:space:]]*//gp;}' "$VERSION_FILE")"
+else
+	MANIFEST="${CLAUDE_PLUGIN_ROOT}/.claude-plugin/plugin.json"
+	[ -f "$MANIFEST" ] || give_up "no ${VERSION_FILE} and manifest not found at ${MANIFEST}."
+	VERSION="$(sed -n 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$MANIFEST" | head -1)"
+fi
+[ -n "$VERSION" ] || give_up "could not determine sdd binary version (checked ${VERSION_FILE} and plugin.json)."
 
 if [ -n "$BASE_URL_OVERRIDE" ]; then
 	BASE="$BASE_URL_OVERRIDE"

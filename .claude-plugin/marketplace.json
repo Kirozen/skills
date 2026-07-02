@@ -8,12 +8,12 @@
     {
       "name": "code-quality",
       "source": "./plugins/code-quality",
-      "description": "Code-quality skills: systematic debugging, Clean Code & Clean Architecture, code review, and technical-debt analysis."
+      "description": "Code-quality skills: systematic debugging, Clean Code & Clean Architecture, code review, adversarial design stress-testing, and technical-debt analysis (prioritization + duplication/dead-code enumeration)."
     },
     {
       "name": "sdd",
       "source": "./plugins/sdd",
-      "description": "SQLite-backed spec engine: grill -> spec -> research -> review -> build loop, binary auto-provisioned from GitHub releases."
+      "description": "SQLite-backed spec engine: grill -> spec -> research -> review -> build -> backprop -> deepen -> drift loop, binary auto-provisioned from GitHub releases."
     },
     {
       "name": "gopls-daemon",

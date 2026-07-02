@@ -20,6 +20,9 @@ plugins/
     commands/<cmd>.md               # slash commands (auto-discovered at plugin root)
     hooks/hooks.json                # SessionStart hook -> provisions the sdd binary
     scripts/ensure-sdd-binary.sh    # downloads the binary from Kirozen/sdd releases
+  gopls-daemon/                     # LSP config only, no skills
+    .claude-plugin/plugin.json
+    .lsp.json                       # gopls in shared daemon mode
 ```
 
 - **Skill files**: `plugins/<plugin>/skills/<skill>/SKILL.md`. The plugin scans `skills/` by default — no `skills` field needed in `plugin.json`.
@@ -31,6 +34,7 @@ Plugins currently in the marketplace:
 
 - **`code-quality`** bundles `debugger`, `clean-code`, `clean-architect`, `code-reviewer`, `debt-analyzer`, `dva`, `techdebt` — a connected set (clean-code/clean-architect = the standard, code-reviewer = catch, debt-analyzer/techdebt = measure, dva = adversarially challenge, debugger = fix). `dva` (adversarial Engineer/Antagonist review) and `techdebt` (agent-orchestrated duplication/dead-code audit, with a `references/` dir) carry supporting reference files; the rest are pure Markdown.
 - **`sdd`** — SQLite-backed spec-driven development (skills `sdd-grill`, `sdd-spec`, `sdd-research`, `sdd-review`, `sdd-build`, `sdd-backprop`, `sdd-deepen`, `sdd-drift` + matching slash commands). This is a *vendored* plugin: the engine (Go CLI, release pipeline) lives in the separate `Kirozen/sdd` repo. See *Maintaining the vendored `sdd` plugin* below.
+- **`gopls-daemon`** — LSP-only plugin: a single `.lsp.json` configuring the Go language server (`gopls`) in shared daemon mode for Claude Code's LSP integration. No skills, no commands.
 
 ## Adding a skill (to an existing plugin)
 
@@ -61,8 +65,8 @@ claude --plugin-dir ./plugins/code-quality    # load the plugin locally without 
 `plugins/sdd/` is a copy of the plugin slice of the `Kirozen/sdd` repo (skills, commands, hooks, provisioning script) — **not** its Go source. The split of source-of-truth:
 
 - **Skills / commands / hooks** → this repo is now the single source of truth. Edit them here.
-- **The `sdd` CLI binary** → never vendored. The `SessionStart` hook runs `scripts/ensure-sdd-binary.sh`, which downloads the binary matching `plugin.json`'s `version` from `https://github.com/Kirozen/sdd/releases/download/v<version>/` (verifies SHA256, lands it on PATH at `${CLAUDE_PLUGIN_ROOT}/bin/sdd`). The engine + release pipeline stay in `Kirozen/sdd`.
-- **Version coupling.** After a new `Kirozen/sdd` release `vX.Y.Z`, bump `version` in `plugins/sdd/.claude-plugin/plugin.json` here — otherwise the hook keeps fetching the old binary. The release asset names (`sdd_<os>_<arch>` + `SHA256SUMS`) are a contract the script depends on.
+- **The `sdd` CLI binary** → never vendored. The `SessionStart` hook runs `scripts/ensure-sdd-binary.sh`, which downloads the binary whose tag is read from `scripts/binary-version` (fallback: `plugin.json`'s `version`) from `https://github.com/Kirozen/sdd/releases/download/v<version>/` (verifies SHA256, lands it on PATH at `${CLAUDE_PLUGIN_ROOT}/bin/sdd`). The engine + release pipeline stay in `Kirozen/sdd`.
+- **Two decoupled versions.** `plugin.json`'s `version` is the *plugin* version — bump it on any change here (skills, commands, hooks) or installed users won't get updates. `scripts/binary-version` is the *CLI binary* release tag, bumped **only** after a new `Kirozen/sdd` binary release `vX.Y.Z`. They move independently: a skill-only change bumps `version` and leaves `binary-version` alone. The release asset names (`sdd_<os>_<arch>` + `SHA256SUMS`) are a contract the script depends on. **Mirror any change to `ensure-sdd-binary.sh` (and this decoupling — invariant V82) back into `Kirozen/sdd`** so the vendored copy and upstream don't diverge.
 
 ## Gotchas
 

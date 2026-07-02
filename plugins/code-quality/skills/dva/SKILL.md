@@ -12,16 +12,20 @@ description: >-
   "find flaws", "red team this".
 ---
 
-# Double Verification Adversariale (DVA)
+# Adversarial Double-Verification (DVA)
 
 Systematic method for validating and improving technical solutions through a structured feedback loop between two roles: **Engineer** (proposes) and **Antagonist** (challenges).
 
 ## When to Use
 
-- Reviewing a proposed code change, architecture, or algorithm
-- Validating a solution before merge or deployment
-- Stress-testing a design for edge cases, security, and performance
+- Stress-testing a proposed design, architecture, or algorithm before committing to it
+- Pressure-testing an approach for edge cases, security, and performance
+- Comparing alternatives before choosing one
 - Red-teaming a technical decision
+
+For a line-by-line review of an already-written diff/PR before merge, use
+[[code-reviewer]] instead — that reviews concrete changes; DVA challenges a
+proposal.
 
 ## Workflow
 
@@ -128,14 +132,14 @@ Present findings as:
 
 ## Scope Adaptation
 
-Adapt depth to the size of the change:
+Adapt depth to the scope of the proposal:
 
-| Change Size | Engineer Phase | Antagonist Phase |
+| Proposal scope | Engineer Phase | Antagonist Phase |
 |-------------|---------------|-----------------|
-| Single function | 2-3 sentences | Focus on edge cases + security |
-| Feature (multi-file) | Full summary with assumptions | All 5 dimensions |
+| Single algorithm / function design | 2-3 sentences | Focus on edge cases + security |
+| Feature / component design | Full summary with assumptions | All 5 dimensions |
 | Architecture decision | Trade-off analysis | Full DVA + alternatives comparison |
 
 ## References
 
-See `references/detailed-guide.md` for extended tooling recommendations, resources, and worked examples.
+See `references/detailed-guide.md` for tooling recommendations, a feedback-sheet template, and worked examples.

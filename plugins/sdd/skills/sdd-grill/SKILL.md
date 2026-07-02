@@ -4,8 +4,8 @@ description: |
   Sharpen a fuzzy idea into a feature's goal + constraints before any task
   exists, persisting answers into spec.db via the sdd CLI. One question at a
   time, each with a recommended answer; unknowns parked, never guessed. Triggers
-  when the user has a vague idea, says "grill me", "stress-test this", or invokes
-  /sdd-grill. Defers durable writes to sdd-spec.
+  when the user has a vague idea, says "grill me", or invokes /sdd-grill. Defers
+  durable writes to sdd-spec.
 ---
 
 # sdd-grill — sharpen idea before tasks exist

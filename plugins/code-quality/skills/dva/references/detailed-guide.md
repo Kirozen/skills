@@ -1,106 +1,75 @@
-# DVA — Guide Detaille
+# DVA — Detailed Guide
 
-## Outils par Categorie
+## Tooling by category
 
-### Tests Automatises
-| Outil | Usage |
-|-------|-------|
-| pytest / go test | Tests unitaires et d'integration |
-| Selenium / Playwright | Tests end-to-end navigateur |
-| k6 / Locust | Tests de charge et performance |
-| Fuzzing (go-fuzz, AFL) | Decouverte d'inputs inattendus |
+### Automated tests
+| Tool | Use |
+|------|-----|
+| pytest / go test | Unit and integration tests |
+| Selenium / Playwright | End-to-end browser tests |
+| k6 / Locust | Load and performance tests |
+| Fuzzing (go-fuzz, AFL) | Discover unexpected inputs |
 
-### Analyse Statique
-| Outil | Usage |
-|-------|-------|
-| golangci-lint / ESLint | Linting et anti-patterns |
-| SonarQube | Vulnerabilites et code smells |
-| Semgrep | Patterns de securite custom |
-| gosec | Securite specifique Go |
+### Static analysis
+| Tool | Use |
+|------|-----|
+| golangci-lint / ESLint | Linting and anti-patterns |
+| Semgrep | Custom security patterns |
+| gosec | Go-specific security |
+| Trivy / Snyk | Dependency vulnerability scanning |
 
-### Chaos Engineering
-| Outil | Usage |
-|-------|-------|
-| Chaos Monkey | Pannes aleatoires en production |
-| Gremlin | Simulation de pannes controlees |
-| toxiproxy | Simulation de latence/erreurs reseau |
-
-### Monitoring
-| Outil | Usage |
-|-------|-------|
-| Prometheus + Grafana | Metriques temps reel |
-| ELK Stack | Centralisation de logs |
-| Sentry | Tracking d'erreurs |
-
-## Template Complet de Fiche de Feedback
+## Feedback-sheet template
 
 ```markdown
-## DVA Feedback — [Nom du composant]
+## DVA Feedback — [Component name]
 
-**Date** : YYYY-MM-DD
-**Ingenieur** : [nom]
-**Antagoniste** : [nom ou "Claude"]
+**Date**: YYYY-MM-DD
+**Engineer**: [name]
+**Antagonist**: [name or "Claude"]
 
-### Perimetre
-- Probleme : ...
-- Contraintes : ...
-- Criteres de succes : ...
+### Scope
+- Problem: ...
+- Constraints: ...
+- Success criteria: ...
 
-### Failles Identifiees
+### Flaws found
 
-| # | Categorie | Faille | Impact | Preuve | Fix Propose | Severite | Statut |
-|---|-----------|--------|--------|--------|-------------|----------|--------|
-| 1 | Securite | ... | ... | ... | ... | Critique | Corrige |
-| 2 | Performance | ... | ... | ... | ... | Majeur | En cours |
-| 3 | Fonctionnel | ... | ... | ... | ... | Mineur | A faire |
+| # | Category | Flaw | Impact | Evidence | Proposed fix | Severity | Status |
+|---|----------|------|--------|----------|--------------|----------|--------|
+| 1 | Security | ... | ... | ... | ... | Critical | Fixed |
+| 2 | Performance | ... | ... | ... | ... | Major | In progress |
+| 3 | Functional | ... | ... | ... | ... | Minor | To do |
 
-### Forces Validees
-- [ce qui est bien concu et pourquoi]
+### Validated strengths
+- [what is well-designed and why]
 
-### Decision Finale
+### Final decision
 - [ ] PASS
-- [ ] PASS AVEC RESERVES
-- [ ] FAIL — blockers restants : ...
+- [ ] PASS WITH WARNINGS
+- [ ] FAIL — remaining blockers: ...
 ```
 
-## Exemples Concrets
+## Worked examples
 
-### Exemple 1 : Review d'un endpoint API
+### Example 1: API endpoint review
 
-**Ingenieur** : "Nouvel endpoint POST /api/products qui accepte un JSON, valide les champs, et insere en base."
+**Engineer**: "New POST /api/products endpoint that accepts JSON, validates the fields, and inserts into the database."
 
-**Antagoniste** :
-| # | Categorie | Faille | Severite |
-|---|-----------|--------|----------|
-| 1 | Securite | Pas de rate limiting — vulnerable au brute force | Critique |
-| 2 | Fonctionnel | Body > 10MB non rejete — OOM possible | Majeur |
-| 3 | Performance | INSERT sans batch — N+1 si import bulk | Majeur |
-| 4 | Fiabilite | Pas de timeout sur la connexion DB | Mineur |
+**Antagonist**:
+| # | Category | Flaw | Severity |
+|---|----------|------|----------|
+| 1 | Security | No rate limiting — vulnerable to brute force | Critical |
+| 2 | Functional | Body > 10MB not rejected — OOM possible | Major |
+| 3 | Performance | INSERT without batching — N+1 on bulk import | Major |
+| 4 | Reliability | No timeout on the DB connection | Minor |
 
-### Exemple 2 : Review d'architecture
+### Example 2: architecture review
 
-**Ingenieur** : "Migration du monolithe vers 3 microservices avec communication par events."
+**Engineer**: "Migrating the monolith to 3 microservices communicating via events."
 
-**Antagoniste** :
-| # | Categorie | Faille | Severite |
-|---|-----------|--------|----------|
-| 1 | Fiabilite | Pas de dead letter queue — events perdus silencieusement | Critique |
-| 2 | Performance | Serialisation JSON entre services — overhead sur hot path | Majeur |
-| 3 | Maintenabilite | Schema des events non versionne — breaking changes invisibles | Majeur |
-
-## Ressources
-
-### Livres
-- *The DevOps Handbook* (Gene Kim et al.) — Integration continue et feedback loops
-- *Site Reliability Engineering* (Google) — Robustesse des systemes
-- *Secure by Design* (Dan Bergh Johnsson) — Securite par construction
-
-### Methodologies
-- Chaos Engineering : https://principlesofchaos.org/
-- Red Teaming : adversarial testing structure
-- Threat Modeling (STRIDE) : analyse systematique des menaces
-
-### Outils de Securite
-- OWASP ZAP : tests d'intrusion automatises
-- Trivy : scan de vulnerabilites containers/deps
-- Snyk : analyse de dependances
+**Antagonist**:
+| # | Category | Flaw | Severity |
+|---|----------|------|----------|
+| 1 | Reliability | No dead letter queue — events silently lost | Critical |
+| 2 | Performance | JSON serialization between services — overhead on hot path | Major |
+| 3 | Maintainability | Event schema unversioned — breaking changes invisible | Major |
