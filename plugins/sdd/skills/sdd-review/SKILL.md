@@ -18,8 +18,10 @@ cat --feature N` for the feature under review) — you review the spec, not your
 Earn authority before opining: grep the modules the spec touches, read the
 research rows (§R), and fetch any best-practice claim you are unsure of. Trace
 the spec's own wiring with the read commands: `sdd refs V<n>/I.<name>` (who cites
-this — find the blast radius), `sdd cover` (which invariants ship with no proving
-test). `sdd --help` lists every command.
+this — find the blast radius), `sdd graph V<n>/I.<name>` (that blast radius as Mermaid;
+`sdd graph` alone = the durables overview, load-bearing vs orphan at a glance),
+`sdd cover` (which invariants ship with no proving test). `sdd --help` lists
+every command.
 
 ## REFUTE
 Attack each axis for the case where it breaks:
