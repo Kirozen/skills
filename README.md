@@ -33,6 +33,7 @@ SQLite-backed spec-driven development. The spec lives in a database; `SPEC.md` i
 | `sdd-build` | Plan-then-execute against the spec tasks; auto-invokes backprop on failure. |
 | `sdd-backprop` | Bug → spec: trace the root cause and persist a new invariant to catch recurrence. |
 | `sdd-deepen` | Optional design-improvement pass — shrink interfaces, hide decisions. |
+| `sdd-drift` | Read-only detector for code-vs-spec drift; reports violations by severity, writes nothing. Distinct from the `sdd check` CLI (SPEC.md == spec.db). |
 
 The `sdd` CLI binary is **not** vendored here: a `SessionStart` hook auto-provisions it from the [`Kirozen/sdd`](https://github.com/Kirozen/sdd) GitHub releases (verified by SHA256), matching the plugin version.
 
