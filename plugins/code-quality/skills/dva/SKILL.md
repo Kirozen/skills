@@ -140,6 +140,14 @@ Adapt depth to the scope of the proposal:
 | Feature / component design | Full summary with assumptions | All 5 dimensions |
 | Architecture decision | Trade-off analysis | Full DVA + alternatives comparison |
 
+## Handoff to spec (if using sdd)
+
+If an sdd spec governs the target (`spec.db` present), a flaw that survives the
+Antagonist phase and names a *recurring failure mode* is worth persisting: hand
+it to [[sdd-backprop]] (namespaced `/sdd:backprop`) to add an invariant with a
+proving test, so the design constraint is enforced, not just noted. Skip when
+there is no spec.
+
 ## References
 
 See `references/detailed-guide.md` for tooling recommendations, a feedback-sheet template, and worked examples.

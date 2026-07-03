@@ -79,3 +79,10 @@ A ranked table:
 ```
 Followed by a short narrative: the **top 3 to tackle now**, and what's
 **explicitly deferred** and why.
+
+## Handoff to spec (if using sdd)
+
+If an sdd spec governs this repo (`spec.db` present), the backlog items you commit
+to fixing become tracked work: hand the top items to [[sdd-spec]] (namespaced
+`/sdd:spec`, `sdd add-task`) so they live against the spec instead of a loose
+list. Skip when there is no spec.

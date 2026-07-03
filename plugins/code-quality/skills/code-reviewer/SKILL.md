@@ -77,3 +77,11 @@ Severity: **BLOCKER** (must fix), **MAJOR** (should fix), **MINOR** (optional).
 
 End with a verdict: **Approve** / **Approve with comments** / **Request changes**,
 and a one-sentence rationale.
+
+## Handoff to spec (if using sdd)
+
+If an sdd spec governs this code (`spec.db` present), a confirmed BLOCKER that is
+a *recurring class* of defect — not a one-off — is a candidate to persist: hand
+it to [[sdd-backprop]] (namespaced `/sdd:backprop`) to record the bug and add an
+invariant with a proving test, so the spec catches the next occurrence. Skip when
+there is no spec.

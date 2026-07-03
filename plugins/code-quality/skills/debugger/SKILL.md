@@ -70,3 +70,11 @@ is the cause (see [[clean-architect]]). Another patch will not help.
 
 When done, report: the **root cause** (one sentence), the **fix**, the
 **evidence** it works, and the **regression test** added.
+
+## Handoff to spec (if using sdd)
+
+If an sdd spec governs this code (`spec.db` present), don't stop at the local
+regression test: hand the proven root cause to [[sdd-backprop]] (namespaced
+`/sdd:backprop`) to record the bug and, when the cause is a class rather than a
+one-off, add an invariant so the spec catches recurrence. Skip when there is no
+spec.

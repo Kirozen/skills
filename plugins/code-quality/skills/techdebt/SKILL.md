@@ -383,3 +383,10 @@ Acknowledge these in every report:
 Each language has particular quirks that affect detection accuracy. Consult
 [`references/detection-heuristics.md`](references/detection-heuristics.md)
 section 5 for details on JS/TS, Python, Rust, and Go considerations.
+
+## Handoff to spec (if using sdd)
+
+If an sdd spec governs this repo (`spec.db` present), the consolidation and
+dead-code removals worth doing become tracked work: hand them to [[sdd-spec]]
+(namespaced `/sdd:spec`, `sdd add-task`) so each cleanup is a task against the
+spec, not a line in a report that rots. Skip when there is no spec.
