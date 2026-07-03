@@ -97,3 +97,11 @@ Architecture serves change, not purity. Don't impose all four layers on a small
 script or a CRUD app that will never grow — the boundaries cost indirection.
 Apply the Dependency Rule where the cost of change is real; note over-engineering
 as a smell, not a goal.
+
+## Handoff to spec (if using sdd)
+
+If an sdd spec governs this repo (`spec.db` present), a boundary rule you commit
+to — a dependency direction, a layer that must not import another, a type barred
+from crossing — is a *proactive invariant*, not a passing remark: hand it to
+[[sdd-spec]] (namespaced `/sdd:spec`, `sdd add-invariant`) so the rule is enforced
+against the code, not just documented here. Skip when there is no spec.
