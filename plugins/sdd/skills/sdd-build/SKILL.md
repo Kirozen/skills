@@ -57,15 +57,20 @@ orchestrator serializes every DB write and commit. No concurrent SQLite writers.
 
 Per wave:
 1. `sdd ready` → candidate frontier. Empty → done. One task → just run it serially.
-2. **Plan-scout** — one read-only subagent per candidate, in parallel. Each runs
-   PLAN (§PLAN) for its task and returns `{task, feature, files[], cites[V/I],
-   oracle}`. No edits.
+2. **Plan-scout** — one read-only subagent per candidate, in parallel, via the
+   dedicated `sdd:sdd-build-plan-scout` agent type (`subagent_type`; un-namespaced
+   `sdd-build-plan-scout` also resolves). It is **model-pinned to a mid-tier
+   model** — planning which files/cites/oracle a task needs is lighter than
+   writing the code. Each runs PLAN (§PLAN) for its task and returns
+   `{task, feature, files[], cites[V/I], oracle}`. No edits, no spec.db writes.
 3. **Partition** — greedily pick a max subset whose declared `files[]` are
    pairwise disjoint. That subset is this wave; colliding tasks wait for the next
    (their file is freed once the winner commits). File overlap = same wave
    forbidden — this is the whole safety story of the shared tree.
-4. **Execute** — one subagent per wave task, in parallel, same worktree. Each
-   edits only its planned files, runs its oracle, returns `{task, oracle_exit,
+4. **Execute** — one subagent per wave task, in parallel, same worktree. These
+   write real code, so leave them on the session model (do NOT downgrade) — only
+   the read-only plan-scout is routed to a lighter tier. Each edits only its
+   planned files, runs its oracle, returns `{task, oracle_exit,
    invariants_covered[], summary}`. Still no DB writes.
 5. **Barrier (orchestrator, serial)** — for each verdict: oracle 0 AND every cite
    covered → `sdd set-task <ord> --feature <f> --status x` + commit that task.

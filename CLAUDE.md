@@ -14,9 +14,11 @@ plugins/
   code-quality/
     .claude-plugin/plugin.json      # plugin manifest (ONLY this goes in .claude-plugin/)
     skills/<skill>/SKILL.md         # one dir per skill, auto-discovered by the plugin
-  sdd/                              # vendored plugin; engine lives in the Kirozen/sdd repo
+    agents/<agent>.md               # model-pinned subagent types, auto-discovered at plugin root
+  sdd/                              # plugin lives here; only the CLI binary lives in Kirozen/sdd
     .claude-plugin/plugin.json
     skills/<skill>/SKILL.md
+    agents/<agent>.md               # model-pinned subagent types (plan-scout, research-gather)
     commands/<cmd>.md               # slash commands (auto-discovered at plugin root)
     hooks/hooks.json                # SessionStart hook -> provisions the sdd binary
     scripts/ensure-sdd-binary.sh    # downloads the binary from Kirozen/sdd releases
@@ -26,14 +28,15 @@ plugins/
 ```
 
 - **Skill files**: `plugins/<plugin>/skills/<skill>/SKILL.md`. The plugin scans `skills/` by default — no `skills` field needed in `plugin.json`.
+- **Agent files**: `plugins/<plugin>/agents/<agent>.md`, auto-discovered at the plugin root (no `agents` field in `plugin.json`). Frontmatter `model:` (`haiku`/`sonnet`/`opus`) pins the subagent's model, and `tools:` is a read-only allowlist. Used to route a skill's mechanical subagents to a cheaper model while the orchestrator keeps the judgment on the session model. Skills spawn them via `subagent_type` under the scoped name `<plugin>:<agent>` (bare `<agent>` also resolves under `--plugin-dir`).
 - **Frontmatter** (required): `name` + `description`. The `description` carries the trigger phrases (mixed FR/EN) and is the *primary* trigger mechanism — write them for recall, lean slightly "pushy" to fight under-triggering, not prose.
 - **Cross-references**: skills link each other with `[[name]]` (e.g. `debugger` → `[[clean-architect]]`). It's a textual convention; the real invocation is namespaced (below).
 - **Invocation is namespaced**: a plugin skill is called `/code-quality:<skill>`, not `/<skill>`. This is intentional and can't be changed.
 
 Plugins currently in the marketplace:
 
-- **`code-quality`** bundles `debugger`, `clean-code`, `clean-architect`, `code-reviewer`, `debt-analyzer`, `dva`, `techdebt` — a connected set (clean-code/clean-architect = the standard, code-reviewer = catch, debt-analyzer/techdebt = measure, dva = adversarially challenge, debugger = fix). `dva` (adversarial Engineer/Antagonist review) and `techdebt` (agent-orchestrated duplication/dead-code audit, with a `references/` dir) carry supporting reference files; the rest are pure Markdown.
-- **`sdd`** — SQLite-backed spec-driven development (skills `sdd-grill`, `sdd-spec`, `sdd-research`, `sdd-review`, `sdd-build`, `sdd-backprop`, `sdd-deepen`, `sdd-drift` + matching slash commands). This is a *vendored* plugin: the engine (Go CLI, release pipeline) lives in the separate `Kirozen/sdd` repo. See *Maintaining the vendored `sdd` plugin* below.
+- **`code-quality`** bundles `debugger`, `clean-code`, `clean-architect`, `code-reviewer`, `debt-analyzer`, `dva`, `techdebt` — a connected set (clean-code/clean-architect = the standard, code-reviewer = catch, debt-analyzer/techdebt = measure, dva = adversarially challenge, debugger = fix). `dva` (adversarial Engineer/Antagonist review) and `techdebt` (agent-orchestrated duplication/dead-code audit, with a `references/` dir) carry supporting reference files; `techdebt` also ships five model-pinned detection agents under `agents/` (mechanical passes on `haiku`, structural passes on `sonnet`); the rest are pure Markdown.
+- **`sdd`** — SQLite-backed spec-driven development (skills `sdd-grill`, `sdd-spec`, `sdd-research`, `sdd-review`, `sdd-build`, `sdd-backprop`, `sdd-deepen`, `sdd-drift` + matching slash commands). This repo owns the plugin (skills, commands, hooks, agents); only the CLI binary + its release pipeline live in the separate `Kirozen/sdd` repo. See *Maintaining the `sdd` plugin* below.
 - **`gopls-daemon`** — LSP-only plugin: a single `.lsp.json` configuring the Go language server (`gopls`) in shared daemon mode for Claude Code's LSP integration. No skills, no commands.
 
 ## Adding a skill (to an existing plugin)
@@ -60,18 +63,18 @@ claude --plugin-dir ./plugins/code-quality    # load the plugin locally without 
 /plugin install code-quality@kirozen-skills    # then install the plugin
 ```
 
-## Maintaining the vendored `sdd` plugin
+## Maintaining the `sdd` plugin
 
-`plugins/sdd/` is a copy of the plugin slice of the `Kirozen/sdd` repo (skills, commands, hooks, provisioning script) — **not** its Go source. The split of source-of-truth:
+`plugins/sdd/` **is** the plugin (skills, commands, hooks, agents, provisioning script) and this repo owns it. Only the `sdd` **CLI binary** lives in `Kirozen/sdd`. The split of source-of-truth:
 
-- **Skills / commands / hooks** → this repo is now the single source of truth. Edit them here.
+- **Skills / commands / hooks / agents** → this repo is the single source of truth. Edit them here.
 - **The `sdd` CLI binary** → never vendored. The `SessionStart` hook runs `scripts/ensure-sdd-binary.sh`, which downloads the binary whose tag is read from `scripts/binary-version` (fallback: `plugin.json`'s `version`) from `https://github.com/Kirozen/sdd/releases/download/v<version>/` (verifies SHA256, lands it on PATH at `${CLAUDE_PLUGIN_ROOT}/bin/sdd`). The engine + release pipeline stay in `Kirozen/sdd`.
-- **Two decoupled versions.** `plugin.json`'s `version` is the *plugin* version — bump it on any change here (skills, commands, hooks) or installed users won't get updates. `scripts/binary-version` is the *CLI binary* release tag, bumped **only** after a new `Kirozen/sdd` binary release `vX.Y.Z`. They move independently: a skill-only change bumps `version` and leaves `binary-version` alone. The release asset names (`sdd_<os>_<arch>` + `SHA256SUMS`) are a contract the script depends on. **Mirror any change to `ensure-sdd-binary.sh` (and this decoupling — invariant V82) back into `Kirozen/sdd`** so the vendored copy and upstream don't diverge.
+- **Two decoupled versions.** `plugin.json`'s `version` is the *plugin* version — bump it on any change here (skills, commands, hooks, agents) or installed users won't get updates. `scripts/binary-version` is the *CLI binary* release tag, bumped **only** after a new `Kirozen/sdd` binary release `vX.Y.Z`. They move independently: a skill-only change bumps `version` and leaves `binary-version` alone. The release asset names (`sdd_<os>_<arch>` + `SHA256SUMS`) are a contract the script depends on. **Mirror any change to `ensure-sdd-binary.sh` (and this decoupling — invariant V82) with `Kirozen/sdd`** so the script and the release-asset contract don't diverge.
 
 ## Gotchas
 
 - **`plugin.json` is the only thing inside `.claude-plugin/`.** `skills/` (and any `commands/`, `agents/`, `hooks/`) live at the *plugin root*, never inside `.claude-plugin/`.
-- **`.claude/skills/` symlinks are for local dogfooding only.** Installed plugins expose their skills namespaced (`/code-quality:debugger`). For development *inside this repo*, `.claude/skills/<skill>` symlinks each plugin's skill dir (relative: `../../plugins/<plugin>/skills/<skill>`) so it loads as a plain project skill (`/<skill>`, un-namespaced) without `/plugin install`. Regenerate after adding a skill; vendored plugins shipped elsewhere (e.g. `sdd`) must NOT carry such a symlink (it was removed from `Kirozen/sdd`).
+- **`.claude/skills/` symlinks are for local dogfooding only.** Installed plugins expose their skills namespaced (`/code-quality:debugger`). For development *inside this repo*, `.claude/skills/<skill>` symlinks each plugin's skill dir (relative: `../../plugins/<plugin>/skills/<skill>`) so it loads as a plain project skill (`/<skill>`, un-namespaced) without `/plugin install`. Regenerate after adding a skill; `sdd` must NOT carry such a symlink — its skills need the `sdd` binary on PATH, provisioned by the `SessionStart` hook that only fires on plugin install, not via a bare skill symlink.
 - **Version bumps.** `plugin.json` sets `version`; bump it on each release or installed users won't get updates. If omitted, the git commit SHA is used instead.
 - **`/reload-plugins`** is required after adding or renaming a skill/plugin; changes aren't picked up live.
 - **No `../` paths.** Files referenced outside a plugin's own directory aren't copied to the install cache. Keep everything self-contained; use `${CLAUDE_PLUGIN_ROOT}` for internal paths in any hook/script.

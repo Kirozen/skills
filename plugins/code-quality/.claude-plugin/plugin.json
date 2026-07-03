@@ -1,7 +1,7 @@
 {
   "name": "code-quality",
   "description": "Code-quality skills: systematic root-cause debugging, Clean Code & Clean Architecture (Robert C. Martin), pre-merge code review, adversarial design stress-testing, and technical-debt analysis (prioritization + duplication/dead-code enumeration).",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "author": {
     "name": "Kirozen"
   },

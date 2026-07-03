@@ -19,7 +19,10 @@ re-derive. Research rows are durable in spec.db — they survive feature wipes.
 1. SCOPE — turn the unknown into 1-3 concrete questions. Vague "research auth" →
    "JWT lib for Node ESM, maintained?".
 2. GATHER — prefer primary sources (official docs, the repo, the RFC). For a big
-   sweep, spawn a sub-agent so raw pages never touch this context.
+   sweep, spawn the dedicated `sdd:sdd-research-gather` agent (`subagent_type`,
+   pinned to a mid-tier model — extraction, not reasoning) so raw pages never
+   touch this context; it returns distilled sourced rows. If the harness surfaces
+   it un-namespaced, `sdd-research-gather` also resolves.
 3. DISTILL — crush each answer to one terse line + its source.
 4. PERSIST — write each finding through the CLI:
    ```

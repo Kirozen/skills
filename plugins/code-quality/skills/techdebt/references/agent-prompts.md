@@ -3,6 +3,15 @@
 Concrete prompts to pass to each sub-agent when orchestrating a techdebt audit.
 Copy the relevant prompt, fill in the `{{placeholders}}`, and spawn the agent.
 
+> **These missions are also materialized as dedicated plugin agent types** in
+> [`../../../agents/techdebt-*.md`](../../../agents/) — each pins its own model
+> (`copypaste-blocks`/`dead-code` → haiku, the three structural passes → sonnet)
+> and carries the mission below as its system prompt. In parallel mode the
+> orchestrator spawns those types via `subagent_type` and passes only the run
+> context (no mission prompt). This file is the fuller prose reference and the
+> source for **sequential mode** (< 20 files), where the passes run inline on the
+> session model. Keep the two in sync when editing a mission.
+
 ---
 
 ## Common Preamble (include in every agent prompt)

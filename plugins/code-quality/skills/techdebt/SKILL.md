@@ -117,23 +117,42 @@ Tag these findings as `category: "sql_migration"`.
 
 ### Agent Orchestration
 
-Spawn 5 **read-only** sub-agents in parallel (for codebases >= 20 files).
-Each agent uses `Glob`, `Grep`, `Read`, and `LSP` (when available) — no edits.
+Spawn 5 **read-only** sub-agents in parallel (for codebases >= 20 files) via the
+Task tool's `subagent_type`. These are dedicated plugin agent types — each carries
+its own mission, method, and output schema as its system prompt, and each **pins
+its own model** so mechanical passes run cheaper without dragging down the
+judgment-heavy ones. You do not paste a mission prompt; you pass only the *run
+context* (from the Pre-Scan Phase) as the task prompt: languages, root, files in
+scope, exclusions, the git activity index, and any monorepo/incremental/SQL-
+migration flags.
 
-| Agent                  | Mission                                  | Key tools             |
-|------------------------|------------------------------------------|-----------------------|
-| `duplicate-functions`  | Find functions with near-identical structure | Grep, Read, LSP      |
-| `copypaste-blocks`     | Find repeated blocks of >= 10 lines       | Grep, Read            |
-| `consolidation`        | Find similar implementations to merge     | Grep, Glob, Read, LSP |
-| `dead-code`            | Find exported symbols with zero references | Grep, Glob, LSP      |
-| `test-debt`            | Find debt in test code (duplication, dead helpers, missing coverage patterns) | Grep, Glob, Read |
+| `subagent_type`                     | Mission                                        | Model  |
+|-------------------------------------|------------------------------------------------|--------|
+| `code-quality:techdebt-copypaste-blocks`     | Repeated blocks of >= 10 near-identical lines | haiku  |
+| `code-quality:techdebt-dead-code`            | Exported symbols with zero external references | haiku  |
+| `code-quality:techdebt-duplicate-functions`  | Functions with near-identical structure       | sonnet |
+| `code-quality:techdebt-consolidation`        | Similar implementations ripe to merge          | sonnet |
+| `code-quality:techdebt-test-debt`            | Duplication / dead helpers / orphaned tests    | sonnet |
 
-Each agent returns a list of findings in the format defined in
+The two mechanical passes (`copypaste-blocks`, `dead-code`) run on **haiku** —
+they are textual matching and reference counting against explicit rules. The three
+structural-comparison passes run on **sonnet**. The orchestrator (this context)
+stays on the session model: it owns the reasoning that follows — cross-agent
+dedup, priority/confidence scoring, and report assembly.
+
+> Names are scoped to the plugin (`code-quality:techdebt-*`). If your harness
+> surfaces them un-namespaced (e.g. loaded via `--plugin-dir`), the bare
+> `techdebt-*` name also resolves — pick whichever appears in the available agent
+> list. All five restrict tools to `Glob, Grep, Read, LSP` — read-only by
+> construction (no Edit/Write, no Bash), so they cannot mutate the tree.
+
+Each agent returns a JSON array of findings in the format defined in
 **Findings Format** below. **Cap: 10 findings per agent**, ordered by
 priority then by lines affected. If more exist, the agent notes how many
 were omitted.
 
-For concrete agent prompts with full instructions, see
+The dedicated agent bodies live in [`../../agents/techdebt-*.md`](../../agents/);
+the fuller prose walkthrough of each mission is in
 [`references/agent-prompts.md`](references/agent-prompts.md).
 
 For detailed detection patterns and language-specific heuristics, see
