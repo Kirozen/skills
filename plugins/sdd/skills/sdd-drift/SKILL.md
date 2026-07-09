@@ -5,11 +5,13 @@ description: |
   spec.db) against the current code and reports violations grouped by severity.
   Writes nothing — suggests remedies via sdd-backprop / sdd-spec / sdd-build but
   never invokes them. This checks code == spec (a different axis from `sdd
-  export`, which merely re-renders SPEC.md from spec.db). Triggers when the user
-  asks to check drift, audit the spec, verify invariants hold in code, or ask
-  whether the code still matches §V/§I/§T. Phrasings: "check drift", "sdd drift",
-  "audit the spec", "does the code still match V2", "are the invariants still
-  true", "spec vs code", /sdd-drift.
+  export`, which merely re-renders SPEC.md from spec.db). Scope defaults to the
+  whole project; `--feature <f>` restricts the check to one feature's tasks and
+  the refs they cite. Triggers when the user asks to check drift, audit the
+  spec, verify invariants hold in code, or ask whether the code still matches
+  §V/§I/§T. Phrasings: "check drift", "sdd drift", "audit the spec", "does the
+  code still match V2", "are the invariants still true", "spec vs code", "drift
+  on this feature", /sdd-drift.
 ---
 
 # sdd-drift — code-vs-spec drift report
@@ -33,13 +35,25 @@ axis entirely.
    - `§I` → check interfaces
    - `§T` → audit task status vs code
    - `--all` → all three
+   - `--feature <f>` → scope the check to one feature (composes with any of the
+     above; omit it and scope stays the whole project, unchanged, V6)
+3. If `--feature <f>` is given:
+   - Read `sdd cat --feature <f>` instead of the whole-project `sdd cat`. If the
+     feature doesn't exist, the CLI errors clearly — surface it and stop.
+   - §T checks only that feature's tasks (already scoped by `--feature <f>`).
+   - §V/§I check only the refs cited by that feature's tasks — read them off the
+     `cites` column of the §T section in that same output (single source of
+     truth, V9); do not sweep `sdd refs` per invariant.
+   - No task in the feature cites any ref → say so explicitly ("0 refs cités
+     par cette feature — rien à vérifier en §V/§I") instead of an empty §V/§I
+     section that a clean whole-project report would also produce (V8).
 
 Orient with the read-only commands: `sdd list invariant|interface|task`,
 `sdd refs V<n>|I.<name>` (rows citing a ref), `sdd cover` (proving test per
 invariant, `!` if none), `sdd graph V<n>|I.<name>` (that durable's blast radius
 as Mermaid — everything citing it, to weigh a violation's impact before you rank
 its severity; `sdd graph` alone = the durables overview, orphans/uncovered
-flagged).
+flagged; `sdd graph --feature <f>` scopes that overview to one feature).
 
 ## CHECK §V — invariants
 
@@ -72,7 +86,9 @@ For each T<n> (ords are per-feature):
 
 ## REPORT
 
-Grouped by severity. Cite the ref and file:line.
+Grouped by severity. Cite the ref and file:line. When `--feature <f>` scoped
+the check, open the report with `Scope: Feature <f> <name>` — a clean scoped
+report must never read as a clean whole-project one (V7).
 
 ```
 ## §V drift
