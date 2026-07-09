@@ -13,6 +13,8 @@ description: |
 A bug fixed in code alone can recur. A bug turned into an invariant cannot. The
 bug log is durable in spec.db — it survives every feature wipe.
 
+Full sdd subcommand reference: `plugins/sdd/COMMANDS.md`.
+
 ## STEPS
 1. Read the failure output. Find the root cause (read the code).
 2. Classify: (a) code bug, (b) spec wrong, (c) unspecified edge case.

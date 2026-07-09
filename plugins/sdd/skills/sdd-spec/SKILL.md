@@ -45,7 +45,7 @@ Landing a whole spec at once? Batch every write in one transaction with
 - `--cites` must reference existing V<n>/I.<name>; the FK rejects orphans (V5).
 - Mutations commit atomically to spec.db (the sole store); `sdd export` regenerates SPEC.md on demand — no auto-export.
 - Show the user what you will run, then run it. The CLI is the diff.
-- `sdd --help` lists every command; `sdd <cmd> --help` for one.
+- `plugins/sdd/COMMANDS.md` has the full subcommand reference; `sdd --help` / `sdd <cmd> --help` if it's stale or missing something.
 
 ## HANDOFF
 After tasks exist, point the user at **sdd-review** (high blast radius) or

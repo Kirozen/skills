@@ -14,6 +14,8 @@ description: |
 
 A bad assumption caught here costs one question; caught after build it costs a bug.
 
+Full sdd subcommand reference: `plugins/sdd/COMMANDS.md`.
+
 ## CALIBRATE
 One opening read: how well does the user know the domain, how locked is the
 idea, how much pressure (light / normal / brutal). Match it.
