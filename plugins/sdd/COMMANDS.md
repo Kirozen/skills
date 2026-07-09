@@ -16,7 +16,7 @@ Two parameters look like enums but differ:
 | Commande | Flags | Exemple |
 |---|---|---|
 | `add-bug` | `<cause>` `--fix <V-list>` (required) `--date <ISO>` (default: today) | `sdd add-bug "nil deref on empty input" --fix V12` |
-| `add-cite` | `<T-ord>` `--feature <f>` (required) `<cite> [<cite>...]` | `sdd add-cite T2 --feature 1 V3,I.commands-md` |
+| `add-cite` | `<T-ord>` `--feature <f>` (required) `<cite> [<cite>...]` (space-separated, not comma) | `sdd add-cite T2 --feature 1 V3 I.commands-md` |
 | `add-constraint` | `<text>` `--feature <f>` (required) | `sdd add-constraint "hors scope: rtk, git" --feature 1` |
 | `add-goal` | `<text>` `--feature <f>` (required) | `sdd add-goal "réduire les appels --help" --feature 1` |
 | `add-interface` | `<kind>` `<name>` `<sig>` (positional, no flags) | `sdd add-interface doc commands-md "table commande\|flags\|exemple"` |
