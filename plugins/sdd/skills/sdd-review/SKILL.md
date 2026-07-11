@@ -31,6 +31,40 @@ Attack each axis for the case where it breaks:
 - Constraint conflict — do two constraints fight, or fight a research finding?
 - Unowned edge — the input/order/failure/concurrency no task covers.
 
+**Scope threshold first.** A small feature (a handful of tasks, one module)
+doesn't justify spawning 5 subagents — refute the axes directly, in this same
+context. Above that (high blast radius: shared module, data, public
+interface), spawn one lens per axis in parallel via `subagent_type`:
+
+| `subagent_type`                       | Axis                 | Model  |
+|-----------------------------------------|----------------------|--------|
+| `sdd:sdd-review-goal-reality`           | Goal vs reality      | sonnet |
+| `sdd:sdd-review-missing-invariant`      | Missing invariant    | sonnet |
+| `sdd:sdd-review-interface-drift`        | Interface drift      | sonnet |
+| `sdd:sdd-review-constraint-conflict`    | Constraint conflict  | sonnet |
+| `sdd:sdd-review-unowned-edge`           | Unowned edge         | sonnet |
+
+Pass each lens the feature's `sdd cat` output as its task prompt — not a
+mission prompt, that lives in the agent file. All five are strictly read-only
+(no `sdd add-*`/`set-*`/`edit`, no code edits — only the orchestrator writes)
+and run on **sonnet**: refutation is judgment-heavy, not mechanical, so none
+downgrade to a lighter model.
+
+> Names are scoped to the plugin (`sdd:sdd-review-*`). Un-namespaced
+> `sdd-review-*` also resolves if loaded via `--plugin-dir`.
+
+If a lens fails or returns unparseable output, do not drop it silently —
+report that axis as **NOT REFUTED** with the reason, so a clean gate never
+hides an axis that was never actually attacked.
+
+**Merge**: the same defect can surface from more than one axis (e.g. a gap
+that is both a missing invariant and an unowned edge). Group findings by
+overlapping claim/evidence; keep the higher severity and list both axes
+rather than reporting it twice.
+
+**Below the threshold**, work the axes inline in this same context, one after
+another.
+
 ## CLASSIFY
 `evidence → claim → severity`: BLOCK (ships a defect), HARDEN (add an invariant),
 NOTE (worth knowing). No evidence → down-rank to NOTE `[unverified]`.

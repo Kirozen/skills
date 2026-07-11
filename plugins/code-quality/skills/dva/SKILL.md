@@ -47,7 +47,39 @@ Understand and frame the solution before critiquing it.
 
 ### Phase 2: Critical Analysis (Antagonist Role)
 
-Systematically find all flaws across these dimensions:
+Systematically find all flaws across these dimensions.
+
+#### Agent Orchestration
+
+**Scope threshold first.** A single-function fix or a < 100-line diff doesn't
+justify spawning 5 subagents — run the checklists below inline instead. Above
+that (a feature/component design or an architecture decision — see Scope
+Adaptation), spawn the 5 lenses in parallel via `subagent_type`:
+
+| `subagent_type`             | Dimension        | Model  |
+|------------------------------|------------------|--------|
+| `code-quality:dva-correctness`   | Functional Correctness | sonnet |
+| `code-quality:dva-security`      | Security               | sonnet |
+| `code-quality:dva-performance`   | Performance            | sonnet |
+| `code-quality:dva-reliability`   | Reliability            | sonnet |
+| `code-quality:dva-maintainability` | Maintainability      | sonnet |
+
+Pass each lens the Engineer-phase summary (scope, constraints, success
+criteria, design decisions) as its task prompt — not a mission prompt, that
+lives in the agent file. All five are read-only (`Glob, Grep, Read, LSP`, no
+Edit/Write/Bash) and run on **sonnet**: unlike techdebt's mechanical passes,
+every dva lens is judgment-heavy structural review, not pattern matching, so
+none of them downgrade to a lighter model.
+
+> Names are scoped to the plugin (`code-quality:dva-*`). Un-namespaced
+> `dva-*` also resolves if loaded via `--plugin-dir`.
+
+If a lens fails or returns unparseable output, do not drop it silently —
+report that dimension as **NOT VERIFIED** in the output with the reason, so
+the reader never mistakes a missing check for a clean one.
+
+**Below the threshold**, work the checklists below directly, in this same
+context, one dimension after another.
 
 #### Functional Correctness
 - What happens with null/empty/malformed inputs?
@@ -78,6 +110,11 @@ Systematically find all flaws across these dimensions:
 - Are abstractions justified or premature?
 - Does the change increase coupling?
 - Are there hidden side effects?
+
+**Merge (when spawned in parallel)**: the same flaw can surface from more than
+one lens (e.g. an unvalidated input flagged by both Correctness and Security).
+Group findings by overlapping evidence/location; keep the higher severity and
+list both dimensions rather than reporting it twice.
 
 **Output**: A feedback table:
 

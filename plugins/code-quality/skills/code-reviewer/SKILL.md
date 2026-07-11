@@ -51,6 +51,44 @@ conventions already in this codebase, not your personal taste.
    design/altitude (see [[clean-architect]]). Lowest priority; never block a
    merge on style alone.
 
+## Agent orchestration
+
+**Scope threshold first.** A diff under ~100 lines or a single file doesn't
+justify spawning 7 subagents — review it directly against the dimensions
+above. Above that (a multi-file diff or a change to shared/critical code),
+spawn one lens per dimension in parallel via `subagent_type`:
+
+| `subagent_type`                         | Dimension            | Model  |
+|-------------------------------------------|-----------------------|--------|
+| `code-quality:code-reviewer-correctness`   | Correctness           | sonnet |
+| `code-quality:code-reviewer-security`      | Security              | sonnet |
+| `code-quality:code-reviewer-data-failure`  | Data & failure modes  | sonnet |
+| `code-quality:code-reviewer-performance`   | Performance & scale   | sonnet |
+| `code-quality:code-reviewer-config-infra`  | Config & infra        | sonnet |
+| `code-quality:code-reviewer-tests`         | Tests                 | sonnet |
+| `code-quality:code-reviewer-quality`       | Quality               | sonnet |
+
+Pass each lens the diff plus enough surrounding context to judge intent — not
+a mission prompt, that lives in the agent file. All seven are read-only
+(`Glob, Grep, Read, LSP`, no Edit/Write/Bash) and run on **sonnet**: every
+dimension here is judgment-heavy review, not mechanical pattern matching, so
+none downgrade to a lighter model.
+
+> Names are scoped to the plugin (`code-quality:code-reviewer-*`).
+> Un-namespaced `code-reviewer-*` also resolves if loaded via `--plugin-dir`.
+
+If a lens fails or returns unparseable output, do not drop it silently —
+report that dimension as **NOT REVIEWED** with the reason, so the reader never
+mistakes a missing check for a clean one.
+
+**Merge**: the same issue can surface from more than one lens (e.g. an
+unvalidated input flagged by both Correctness and Security). Group findings by
+overlapping file/line; keep the higher severity and list both dimensions
+rather than reporting it twice.
+
+**Below the threshold**, review inline in this same context, one dimension
+after another, in priority order.
+
 ## Rules
 
 - **Confidence-gated.** Report a finding only if you can point to the line and

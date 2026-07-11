@@ -75,6 +75,30 @@ For each I.<name>:
    - **MISSING** — impl absent.
    - **EXTRA** — code exposes surface not in §I.
 
+## AGENT ORCHESTRATION (§V/§I only)
+
+**Scope threshold first.** Below ~15 combined V+I items in scope, check them
+inline as above — spawning subagents would cost more (re-loading the spec per
+agent) than the sequential grep loop it replaces. Above that, fan out one
+`sdd:sdd-drift-item-check` agent per item in parallel: pass each the item's
+exact text (from the `sdd cat` output already loaded), never re-run `sdd cat`
+per agent. Each agent is read-only (`Glob, Grep, Read, LSP`, no Bash/Edit/Write
+— it never queries spec.db itself) and runs on **sonnet**: classifying
+HOLD/VIOLATE/DRIFT is judgment-heavy structural comparison, not mechanical
+matching.
+
+> Scoped to the plugin (`sdd:sdd-drift-item-check`). Un-namespaced
+> `sdd-drift-item-check` also resolves if loaded via `--plugin-dir`.
+
+If an item-check agent fails or returns unparseable output, do not drop it
+silently — report that item as **UNVERIFIABLE (check failed)** rather than
+omitting it from §V/§I, so a clean report never hides an item that was never
+actually checked.
+
+§T stays main-thread regardless of scope — task status/evidence checks are
+few by construction (one per task) and benefit from the cross-task context
+already loaded.
+
 ## CHECK §T — tasks
 
 For each T<n> (ords are per-feature):
@@ -121,5 +145,7 @@ Never invoke fixes. Report only.
 ## NON-GOALS
 
 - Zero writes. No `sdd add-*`/`set-*`/`edit`. No code edits.
-- No sub-agents. Main thread reads.
+- No sub-agents below the ~15-item threshold (see AGENT ORCHESTRATION) — main
+  thread reads. Above it, only `sdd:sdd-drift-item-check` for §V/§I; §T always
+  stays main-thread.
 - No scores, no grades. Binary per item: holds or drifts.
