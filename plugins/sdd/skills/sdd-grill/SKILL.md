@@ -38,6 +38,7 @@ Open or create the feature, then land each settled answer:
 fid=$(sdd new-feature "<short-name>")
 sdd add-goal "<goal line>" --feature $fid
 sdd add-constraint "<constraint>" --feature $fid
+sdd add-unknown "<parked question>" --feature $fid   # rung 7 — never just `?` in chat
 ```
 Durable truths (invariants/interfaces) wait for sdd-spec — grill proposes, spec
 writes. Never hand-edit SPEC.md; read the spec with `sdd cat` (SPEC.md is an on-demand export).
@@ -46,3 +47,7 @@ writes. Never hand-edit SPEC.md; read the spec with `sdd cat` (SPEC.md is an on-
 When §G is one line with one reading and every blocking unknown is answered or
 parked `?`, hand the feature id to **sdd-spec** to draft invariants/interfaces
 and break the goal into tasks.
+
+A parked unknown isn't done once written — resolve it when it's settled:
+`sdd resolve-unknown <U-ord>` (kept, never deleted). `sdd list unknown --days
+N` surfaces ones that have sat too long without an answer.

@@ -75,8 +75,13 @@ Per wave:
    invariants_covered[], summary}`. Still no DB writes.
 5. **Barrier (orchestrator, serial)** — for each verdict: oracle 0 AND every cite
    covered → `sdd set-task <ord> --feature <f> --status x` + commit that task.
-   Then run the FULL suite once for the wave. Any red → the offending task's
-   changes are the suspect; invoke **sdd-backprop**, leave the task `~`/`todo`.
+   Then run the FULL suite once for the wave. Any red, single-task wave → that
+   task's changes are the suspect; invoke **sdd-backprop**, leave the task
+   `~`/`todo`. Multi-task wave → disjoint files rule out a merge conflict, not a
+   behavioral interaction; bisect by reverting the wave's per-task commits one
+   at a time (last landed first), re-running the suite after each, until it
+   goes green — the last revert that flips it is the suspect. Invoke
+   **sdd-backprop** on that task alone; the others keep their commit.
 6. Re-query `sdd ready` (freed blockers open the next wave) and repeat.
 
 A failed task confines itself: its dependants never enter `ready` until it is
@@ -88,3 +93,9 @@ passing test (`sdd cover` flags any invariant with no proving test), and the
 full suite still passes. Commit after each task. Under `--parallel` the
 full-suite gate runs once per wave at the barrier, not per task (each task still
 commits individually once its own oracle is green).
+
+## HANDOFF
+Building is not shipping. Run **sdd-drift** after this build and before any
+ship — spec drift caught here is a diff; caught in prod it's a durable bug.
+Mid-lifecycle and unsure what's next across features? `sdd guide` recommends
+the next skill per feature stage.

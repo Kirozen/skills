@@ -75,4 +75,8 @@ Each HARDEN finding becomes a new invariant, persisted via sdd-spec:
 sdd add-invariant "<testable invariant the build cannot regress>"
 ```
 End on an explicit gate: GO or NO-GO, never a shrug. NO-GO until every BLOCK is
-cleared; then hand to sdd-build.
+cleared. Persist the verdict — it must outlive this conversation:
+```
+sdd gate <F-ord> --go                          # or --no-go --note "<why>"
+```
+Then hand to sdd-build.
