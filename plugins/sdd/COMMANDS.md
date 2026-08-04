@@ -32,7 +32,7 @@ Two parameters look like enums but differ:
 | `export` | (no flags) | `sdd export` |
 | `graph` | `[key]` `--all` (full project) `--feature <f>` (one feature's neighborhood) | `sdd graph V3` |
 | `guide` | (read-only, no flags) | `sdd guide` |
-| `list` | `[kind]` (invariant\|interface\|task\|bug\|research\|feature\|unknown) `--feature <f>` (task only) `--status <.\|~\|x>` (task only) `--pretty` | `sdd list task --feature 1 --status .` |
+| `list` | `[kind]` (invariant\|interface\|task\|bug\|research\|feature\|unknown) `--feature <f>` (task only) `--status <.\|~\|x>` (task only) | `sdd list task --feature 1 --status .` |
 | `new-feature` | `<name>` (positional, no flags) | `sdd new-feature "sdd-cli-help-discoverability"` |
 | `next` | (read-only, no flags) | `sdd next` |
 | `ready` | (read-only, no flags; TSV output) | `sdd ready` |
