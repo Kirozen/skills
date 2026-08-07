@@ -5,7 +5,7 @@ description: |
   spec.db) against the current code and reports violations grouped by severity.
   Writes nothing — suggests remedies via sdd-backprop / sdd-spec / sdd-build but
   never invokes them. This checks code == spec (a different axis from `sdd
-  export`, which merely re-renders SPEC.md from spec.db). Scope defaults to the
+  spec`, which merely re-renders SPEC.md from spec.db). Scope defaults to the
   whole project; `--feature <f>` restricts the check to one feature's tasks and
   the refs they cite. Triggers when the user asks to check drift, audit the
   spec, verify invariants hold in code, or ask whether the code still matches
@@ -22,7 +22,7 @@ Spec drifting silently from code is the #1 SDD failure mode. sdd-drift is the
 detector. Run it after each build and before each ship — drift caught here is a
 diff; drift caught in prod is a durable bug.
 
-**Not a file render.** `sdd export` re-renders SPEC.md from spec.db (the view vs
+**Not a file render.** `sdd spec` re-renders SPEC.md from spec.db (the view vs
 its source) — a pure read. sdd-drift diffs the spec vs the **code**: a different
 axis entirely.
 
@@ -74,6 +74,16 @@ For each I.<name>:
    - **DRIFT** — impl exists, shape differs.
    - **MISSING** — impl absent.
    - **EXTRA** — code exposes surface not in §I.
+3. Deprecated but still cited: `sdd list interface --status deprecated` for the
+   candidate set, then per candidate:
+   - Whole-project scope → `sdd refs I.<name>` (project-wide, includes
+     finished features — `sdd cat` alone would miss those, V9's cites-column
+     shortcut is deliberately narrower and doesn't apply here).
+   - `--feature <f>` scope → skip `sdd refs`; cross-check the candidate
+     against that feature's cites column already loaded from
+     `sdd cat --feature <f>` (V9).
+
+   Any citer hit classifies as **STALE-DEPRECATED**.
 
 ## AGENT ORCHESTRATION (§V/§I only)
 
@@ -86,6 +96,12 @@ per agent. Each agent is read-only (`Glob, Grep, Read, LSP`, no Bash/Edit/Write
 — it never queries spec.db itself) and runs on **sonnet**: classifying
 HOLD/VIOLATE/DRIFT is judgment-heavy structural comparison, not mechanical
 matching.
+
+The STALE-DEPRECATED check (CHECK §I step 3) always stays main-thread,
+regardless of the fan-out threshold: it's one `sdd list interface --status
+deprecated` sweep plus a handful of `sdd refs`/cites lookups, not per-item
+judgment, and `sdd-drift-item-check` has no `sdd` access to run it. Run it
+once before or after the §I fan-out and merge its hits into the same report.
 
 > Scoped to the plugin (`sdd:sdd-drift-item-check`). Un-namespaced
 > `sdd-drift-item-check` also resolves if loaded via `--plugin-dir`.
@@ -122,12 +138,13 @@ V5 UNVERIFIABLE: no test covers ∀ req path (sdd cover: V5 !).
 ## §I drift
 I.api DRIFT: POST /x returns `{result}` not `{id}`. route.go:112.
 I.cmd MISSING: `foo bar` absent from cli/*.go.
+I.old-auth STALE-DEPRECATED: deprecated, still cited by T4 (feature 2).
 
 ## §T drift
 T3 (feature 2) STALE: status `x`, no middleware file exists.
 
 ## summary
-2 violate. 1 missing. 1 stale. 1 unverifiable.
+2 violate. 1 missing. 1 stale. 1 stale-deprecated. 1 unverifiable.
 ```
 
 ## REMEDY HINTS (not actions)
@@ -139,6 +156,9 @@ End the report with one-line hint per class:
   else **sdd-spec** to add the task.
 - STALE → **sdd-spec**: `sdd set-task <T-ord> --feature <f> --status .` to unflag.
 - EXTRA → **sdd-spec** to `add-interface` and document it, or delete the code.
+- STALE-DEPRECATED → **sdd-spec**: migrate citers off `I.<name>` (`add-cite`
+  the replacement, `rm-cite` the deprecated one), or reconsider the
+  deprecation if it's still load-bearing.
 
 Never invoke fixes. Report only.
 
