@@ -13,7 +13,7 @@ description: |
 
 The other skills produce material; sdd-spec persists it through the CLI. The db
 is the source of truth; read the spec with `sdd cat`. SPEC.md is an on-demand
-export (`sdd export`), never hand-edited (V3).
+export (`sdd spec`), never hand-edited (V3).
 
 ## DISPATCH
 - New feature from an idea → run sdd-grill first if fuzzy, then land it here.
@@ -43,7 +43,7 @@ Landing a whole spec at once? Batch every write in one transaction with
 
 ## RULES
 - `--cites` must reference existing V<n>/I.<name>; the FK rejects orphans (V5).
-- Mutations commit atomically to spec.db (the sole store); `sdd export` regenerates SPEC.md on demand — no auto-export.
+- Mutations commit atomically to spec.db (the sole store); `sdd spec` regenerates SPEC.md on demand — no auto-export.
 - Show the user what you will run, then run it. The CLI is the diff.
 - `plugins/sdd/COMMANDS.md` has the full subcommand reference; `sdd --help` / `sdd <cmd> --help` if it's stale or missing something.
 

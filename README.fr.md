@@ -24,7 +24,7 @@ Skills de code propre & de revue, basées sur *Clean Code* / *Clean Architecture
 
 ### `sdd`
 
-Développement piloté par la spec, adossé à SQLite. La spec vit dans une base de données ; `SPEC.md` en est une vue en lecture seule régénérée à la demande par `sdd export` (spec.db est le seul store).
+Développement piloté par la spec, adossé à SQLite. La spec vit dans une base de données ; `SPEC.md` en est une vue en lecture seule régénérée à la demande par `sdd spec` (spec.db est le seul store).
 
 **Pourquoi** : une mauvaise hypothèse attrapée au moment de la spec coûte une question ; attrapée après le build, elle coûte un bug. `sdd` rend la spec **requêtable et infalsifiable** — invariants, interfaces, tâches se citent via des clés étrangères, donc une tâche ne peut pas référencer un invariant qui n'existe pas. Il pose une coupure : la couche **durable** (invariants, interfaces, bugs, recherche — survit d'une feature à l'autre) vs la couche **éphémère** (goal, contraintes, tâches d'une feature — effacée quand la feature est finie). C'est cette coupure qui empêche la spec de grossir indéfiniment.
 
@@ -45,7 +45,7 @@ grill → spec → research → review → build → backprop → deepen → dri
 | `sdd-build` | Plan-puis-exécution contre les tâches de la spec ; auto-invoque backprop en cas d'échec. |
 | `sdd-backprop` | Bug → spec : tracer la cause racine et persister un nouvel invariant pour capter la récurrence. |
 | `sdd-deepen` | Passe optionnelle d'amélioration du design — réduire les interfaces, cacher les décisions. |
-| `sdd-drift` | Détecteur en lecture seule de divergence code↔spec ; rapporte les violations par sévérité, n'écrit rien. Un axe différent de `sdd export` (qui ne fait que re-rendre SPEC.md). |
+| `sdd-drift` | Détecteur en lecture seule de divergence code↔spec ; rapporte les violations par sévérité, n'écrit rien. Un axe différent de `sdd spec` (qui ne fait que re-rendre SPEC.md). |
 
 Le binaire de la CLI `sdd` n'est **pas** vendorisé ici : un hook `SessionStart` le provisionne automatiquement depuis les [releases GitHub de `Kirozen/sdd`](https://github.com/Kirozen/sdd) (vérifié par SHA256). Le tag de release du binaire est épinglé indépendamment de la version du plugin dans `plugins/sdd/scripts/binary-version`, pour que les mises à jour de skills seules puissent faire évoluer le plugin sans exiger une release de binaire correspondante.
 

@@ -30,11 +30,10 @@ Two parameters look like enums but differ:
 | `cover` | (read-only, no flags) | `sdd cover` |
 | `deprecate-interface` | `<name>` (positional, no flags) | `sdd deprecate-interface old-http-client` |
 | `edit` | `<kind> <key>` `--feature <f>` (required for kind=task) `--text <new>` (required); or `edit goal\|constraint <F-ord> <n>` | `sdd edit task T3 --feature 1 --text "..."` |
-| `export` | (no flags) | `sdd export` |
 | `gate` | `<F-ord>` `--go`\|`--no-go` (one required) `--note <text>` (optional) | `sdd gate 4 --go` |
 | `graph` | `[key]` `--all` (full project) `--feature <f>` (one feature's neighborhood) | `sdd graph V3` |
 | `guide` | (read-only, no flags) | `sdd guide` |
-| `list` | `[kind]` (invariant\|interface\|task\|bug\|research\|feature\|unknown) `--feature <f>` (task only) `--status <.\|~\|x>` (task only) `--days <N>` (unknown only, open rows at least N days old) | `sdd list task --feature 1 --status .` |
+| `list` | `[kind]` (invariant\|interface\|task\|bug\|research\|feature\|unknown) `--feature <f>` (task only) `--status <val>` (kind-aware: task=`.`\|`~`\|`x`, unknown=`open`\|`resolved`\|`all`, interface=`active`\|`deprecated`\|`all`, bug=`fixed`\|`open`\|`all`) `--days <N>` (unknown only, open rows at least N days old; composes with an explicit `--status`) | `sdd list task --feature 1 --status .` |
 | `new-feature` | `<name>` (positional, no flags) | `sdd new-feature "sdd-cli-help-discoverability"` |
 | `next` | (read-only, no flags) | `sdd next` |
 | `ready` | (read-only, no flags; TSV output) | `sdd ready` |
@@ -42,6 +41,7 @@ Two parameters look like enums but differ:
 | `resolve-unknown` | `<U-ord>` (positional, no flags) | `sdd resolve-unknown U1` |
 | `rm-task` | `<T-ord>` `--feature <f>` (required); cites+blockers cascade | `sdd rm-task T4 --feature 1` |
 | `set-task` | `<T-ord>` `--feature <f>` (required) `--status <.\|~\|x>` (required, DB enum) | `sdd set-task T1 --feature 1 --status x` |
+| `spec` | (no flags) | `sdd spec` |
 | `status` | (read-only, no flags) | `sdd status` |
 | `todo` | `--pretty` (grouped human view; default TSV) | `sdd todo --pretty` |
 | `unblock` | `<T-ord>` `--off <T-ord,...>` (required) `--feature <f>` (required) | `sdd unblock T2 --off T1 --feature 1` |
